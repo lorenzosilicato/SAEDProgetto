@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true })); //Bodyparser
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-    secret : 'grande stocchi',
+    secret : 'Il mio segreto',
     resave : false,
     saveUninitialized : true,
     cookie : {secure : false}
@@ -43,7 +43,7 @@ app.use((req, res, next)=>{
 
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
-
+app.use('/iscrizioni', require('./routes/iscrizioni'));
 
 
 app.listen(PORT, ()=>{

@@ -1,5 +1,59 @@
 <%- include('./partials/navbar.ejs') %>
-<h1 class="mt-4">Dashboard</h1>
+<%- include('./partials/messages.ejs') %>
+<div class="container mt-5">
+    <!-- Informazioni Utente -->
+    <div class="card mt-4">
+        <div class="card-header">
+            Il tuo Profilo
+        </div>
+        <div class="card-body">
+            <p class="card-text">Nome: <%= nome %></p>
+            <p class="card-text">Email: <%= email %></p>
+            <p class="card-text">Numero di Telefono: <%= numero_telefono %></p>
+        </div>
+        <a href="/users/logout" class="btn btn-secondary">Logout</a>
+    </div>
 
-<p class="lead mb-3">Welcome <%= nome %></p>
-<a href="/users/logout" class="btn btn-secondary">Logout</a>
+    <!-- Sezione delle prenotazioni -->
+    <div class="mt-4">
+        <h2>Le tue Prenotazioni</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Data</th>
+                <th scope="col">Fascia Oraria</th>
+                <th scope="col">Postazione</th>
+                <th scope="col">Torneo</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% datiPrenotazioni.forEach((prenotazione)=>{%>
+            <tr>
+                <td><%= prenotazione.data.toLocaleString().replace(/,.+/, '')%></td>
+                <td><%= prenotazione.ora_inizio%> - <%= prenotazione.ora_fine%></td>
+                <td><%= prenotazione.postazione %></td>
+                <td>
+                    <%if(prenotazione.gioco == null){%>
+                         <%= 'No'%>
+                    <%}else{%>
+                         <%= prenotazione.gioco%>
+                    <%}%>
+                </td>
+                <td>
+                    <form action="/dashboard" method="POST">
+                        <input type="hidden" name="id_prenotazione" value="<%=prenotazione.id_prenotazione%>">
+                        <button type="submit" class="btn btn-danger">Annulla</button>
+                    </form>
+                </td>
+            </tr>
+            <%});%>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Inserimento Bootstrap -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

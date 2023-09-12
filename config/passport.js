@@ -3,8 +3,8 @@ const db = require('../db');
 const bcrypt = require('bcrypt');
 const pool = require("../db");
 
+//Middleware per serializzare e deserializzare gli utenti loggati
 module.exports = function (passport) {
-
     passport.serializeUser((user, done)=>{
         done(null, user.email);
     });
@@ -15,6 +15,7 @@ module.exports = function (passport) {
         });
     });
 
+    //Local Strategy che gestisce la logica di login
     passport.use(
         new LocalStrategy({usernameField: 'email', passwordField: 'password'}, (email, password, done)=>{
             //Query per matchare l'email
@@ -25,6 +26,7 @@ module.exports = function (passport) {
                 if(!results.rows[0]){
                     return done(null, false, {message : 'Questa email non è registrata'});
                 }
+                //Compara la password passata in input con la password criptata del database
                 bcrypt.compare(password, user.password, (err, isMatch)=>{
                     if(err) throw err;
                     if(isMatch) {

@@ -1,3 +1,4 @@
+<!--Partial per mostare a schermo gli errori, ogni errore risponde ad un codice renderizzando colori e modalità diverse -->
 <% if(typeof errors != 'undefined') {%>
     <% errors.forEach(function(error){ %>
         <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -22,6 +23,7 @@
     </div>
 <%}%>
 
+<!--Questo è l'errore generico a cui fanno riferimento tutte le porzioni di Error-handling del programma-->
 <%if(error != '') {%>
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
         <%= error %>

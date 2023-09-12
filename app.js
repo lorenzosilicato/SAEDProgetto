@@ -10,26 +10,29 @@ const passport = require('passport');
 //Passport Config
 require('./config/passport')(passport);
 
-//View engine setup :
+//Setup dell'engine EJS per gestire le pagine frontend
 app.use(expressLayouts);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-
+//Bodyparser
 app.use(express.json());
-app.use(express.urlencoded({ extended: true })); //Bodyparser
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+//Inizializzazione del middleware di Session
 app.use(session({
     secret : 'Il mio segreto',
     resave : false,
     saveUninitialized : true,
     cookie : {secure : false}
 }));
+
+//Inizializzazione di Passport per la gestione delle sessioni e della logica di login/registrazione
 app.use(passport.initialize());
 app.use(passport.session());
 
-//Connect Flash
+//Inizializzazione del middleware Flash
 app.use(flash());
 
 //Middleware Variabili Globali per mostare messaggi flash durante il redirect
@@ -39,11 +42,13 @@ app.use((req, res, next)=>{
    res.locals.error = req.flash('error');
    next();
 });
+
+
 //Routes :
 
-app.use('/', require('./routes/index'));
-app.use('/users', require('./routes/users'));
-app.use('/iscrizioni', require('./routes/iscrizioni'));
+app.use('/', require('./routes/index')); //Route per gestione pagina Homepage e Dashboard
+app.use('/users', require('./routes/users')); //Route per gestione Login/Register
+app.use('/iscrizioni', require('./routes/iscrizioni')); //Route per gestione di tutti i tipi di iscrizioni
 
 
 app.listen(PORT, ()=>{

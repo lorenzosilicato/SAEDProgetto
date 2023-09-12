@@ -3,13 +3,16 @@ const {ensureAuthenticated, isAdmin} = require("../config/auth");
 const router = express.Router();
 const pool = require('../db');
 
+
+//Gestione delle richieste GET
 router.get('/', (req, res)=>{
     res.render('homepage');
 });
 
+
 router.get('/dashboard', ensureAuthenticated, (req, res)=>{
-    console.log(req.user);
-    let errors= [];
+    let errors= []; //Array per mostrare gli errori tramite Flash
+    //Query per ottenere tutti i dati che popoleranno la dashboard dell'utente
     const text = "SELECT prenotazioni.id_prenotazione, prenotazioni.data, prenotazioni.ora_inizio, prenotazioni.ora_fine, tipo_prenotazione,gioco, prenotazioni.postazione FROM salalan.prenotazioni LEFT JOIN salalan.iscrizione ON prenotazioni.id_prenotazione=iscrizione.id_prenotazione LEFT JOIN salalan.torneo ON iscrizione.id_torneo=torneo.id_torneo LEFT JOIN salalan.utente ON iscrizione.id_utente=utente.nome WHERE prenotazioni.nome=$1 ORDER BY data;";
     const values = [req.user.nome];
     pool.query(text, values, function (error, results){
@@ -30,8 +33,9 @@ router.get('/dashboard', ensureAuthenticated, (req, res)=>{
 
 //Handler Dashboard
 router.post('/dashboard', function (req, res){
-    let errors= [];
+    let errors= []; //Array per mantenere errori e inviarli poi tramite metodo render
     let id_prenotazione = req.body.id_prenotazione;
+    //Query per controllare che i dati inviati dalla richiesta di cancellazione siano corretti
     pool.query('SELECT id_prenotazione, tipo_prenotazione FROM salalan.prenotazioni WHERE id_prenotazione=$1',[id_prenotazione], function (error, results) {
         if (error) {
             errors.push({msg : "Errori interni al database, riprova più tardi"});
@@ -68,9 +72,11 @@ router.post('/dashboard', function (req, res){
 
 
 
+
+
 //Sezione Admin
 
-
+//In questo caso utilizziamo entrambi i middleware di controllo per confermare che l'utente sia autenticato e che sia un admin
 router.get('/adminDashboard',ensureAuthenticated, isAdmin, (req, res)=>{
     let errors= [];
     const text = "SELECT prenotazioni.id_prenotazione, prenotazioni.data, prenotazioni.ora_inizio, prenotazioni.ora_fine, tipo_prenotazione,gioco, prenotazioni.postazione FROM salalan.prenotazioni LEFT JOIN salalan.iscrizione ON prenotazioni.id_prenotazione=iscrizione.id_prenotazione LEFT JOIN salalan.torneo ON iscrizione.id_torneo=torneo.id_torneo LEFT JOIN salalan.utente ON iscrizione.id_utente=utente.nome ORDER BY data;";
@@ -89,7 +95,7 @@ router.get('/adminDashboard',ensureAuthenticated, isAdmin, (req, res)=>{
                     errors
                 });
             }
-            res.render('adminDashboard', {
+            res.render('adminDashboard', { //Si renderizza la pagina EJS passando tutti i valori che la popoleranno
                 nome : req.user.nome,
                 email : req.user.email,
                 numero_telefono : req.user.numero_telefono,
@@ -101,6 +107,7 @@ router.get('/adminDashboard',ensureAuthenticated, isAdmin, (req, res)=>{
     });
 });
 
+
 router.post('/adminDashboard/cancellaPrenotazione', (req, res)=>{
     let errors= [];
     let id_prenotazione = req.body.id_prenotazione;
@@ -111,6 +118,7 @@ router.post('/adminDashboard/cancellaPrenotazione', (req, res)=>{
                 errors
             });
         }
+        //Questo check serve a distinguere le due query per la cancellazione dell'iscrizione, a seconda che essa sia un torneo o una prenotazione semplice
         if(results.rows[0].tipo_prenotazione === 'Torneo'){
             pool.query('DELETE FROM salalan.iscrizione WHERE iscrizione.id_prenotazione =$1', [id_prenotazione], function (error, risposta) {
                 if (error) {

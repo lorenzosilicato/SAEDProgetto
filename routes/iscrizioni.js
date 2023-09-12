@@ -31,6 +31,7 @@ router.post('/prenotazioni', (req, res)=>{
     console.log(data, ora_inizio, ora_fine);
     pool.query("SELECT from salalan.prenotazioni where nome=$1, data=$2, ora_inizio=$3, ora_fine=$4", [req.user.nome, data, ora_inizio, ora_fine], (error, results)=>{
         console.log(typeof results);
+        //Controlla che non vi siano prenotazioni con quei dati già presenti nel database
         if(typeof results === 'undefined'){
            const text = "INSERT INTO salalan.prenotazioni(nome, data, ora_inizio, ora_fine, tipo_prenotazione) values ($1, $2, $3, $4, NULL)";
            const values = [req.user.nome, data, ora_inizio, ora_fine];
@@ -69,6 +70,7 @@ router.post('/tornei', (req, res)=>{
         }
         const torneoIscrizione = results.rows[0];
         pool.query("SELECT * FROM salalan.iscrizione WHERE id_utente=$1 AND id_torneo=$2", [req.user.nome, idTorneo], (error, results)=>{
+            //Controlla che non esista già una prenotazione del torneo per l'utente loggato
             if(typeof results == 'undefined'){
                 const text = "INSERT INTO salalan.prenotazioni(nome, data, ora_inizio, ora_fine, tipo_prenotazione) values ($1, $2, $3, $4, 'Torneo')";
                 const values = [req.user.nome, torneoIscrizione.data, torneoIscrizione.ora_inizio, torneoIscrizione.ora_fine];

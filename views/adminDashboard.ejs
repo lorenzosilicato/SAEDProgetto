@@ -1,0 +1,125 @@
+<%- include('./partials/navbar.ejs') %>
+<div class="container mt-5">
+    <%- include('./partials/messages.ejs') %>
+    <!-- Informazioni Utente -->
+    <div class="card mt-4">
+        <div class="card-header">
+            Il tuo Profilo Admin
+        </div>
+        <div class="card-body">
+            <p class="card-text">Nome: <%= nome %></p>
+            <p class="card-text">Email: <%= email %></p>
+            <p class="card-text">Numero di Telefono: <%= numero_telefono %></p>
+        </div>
+        <a href="/users/logout" class="btn btn-secondary">Logout</a>
+    </div>
+
+    <!-- Creazione Torneo -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h2>Crea un Torneo</h2>
+            <form action="/adminDashboard/creaTorneo" method="POST">
+                <div class="form-group">
+                    <label for="gioco">Gioco:</label>
+                    <input type="text" class="form-control" id="gioco" name="gioco" required>
+                </div>
+                <div class="form-group">
+                    <label for="data">Data:</label>
+                    <input type="date" class="form-control" id="data" name="data" required min="<?= date('Y-m-d') ?>">
+                </div>
+                <div class="form-group">
+                    <label for="ora_inizio">Ora Inizio:</label>
+                    <input type="time" class="form-control" id="ora_inizio" name="ora_inizio" required min="09:00" max="21:00">
+                </div>
+                <div class="form-group">
+                    <label for="ora_fine">Ora Fine:</label>
+                    <input type="time" class="form-control" id="ora_fine" name="ora_fine" required min="10:00" max="22:00">
+                </div>
+                <div class="form-group">
+                    <label for="max_iscritti">Max Giocatori:</label>
+                    <input type="number" class="form-control" id="max_iscritti" name="max_iscritti" required min="4">
+                </div>
+                <button type="submit" class="btn btn-primary">Crea</button>
+            </form>
+        </div>
+    </div>
+
+    <!--Sezione per cancellare i Tornei-->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <h2>Cancella Tornei :</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Gioco</th>
+                    <th scope="col">Data</th>
+                    <th scope="col">Fascia Oraria</th>
+                    <th scope="col">Max Giocatori</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <% datiTornei.forEach((torneo)=>{%>
+                    <tr>
+                        <td><%= torneo.gioco%></td>
+                        <td><%= torneo.data.toLocaleString().replace(/,.+/, '')%></td>
+                        <td><%= torneo.ora_inizio %> - <%= torneo.ora_fine%></td>
+                        <td><%= torneo.max_iscritti%></td>
+                        <td>
+                            <form action="/adminDashboard/cancellaTorneo" method="POST">
+                                <input type="hidden" name="id_torneo" value="<%=torneo.id_torneo%>">
+                                <button type="submit" class="btn btn-danger">Cancella</button>
+                            </form>
+                        </td>
+                    </tr>
+                <%});%>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Sezione delle prenotazioni -->
+    <div class="mt-4">
+        <h2>Prenotazioni</h2>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Data</th>
+                <th scope="col">Fascia Oraria</th>
+                <th scope="col">Postazione</th>
+                <th scope="col">Torneo</th>
+                <th scope="col"></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% datiPrenotazioniAdmin.forEach((prenotazione)=>{%>
+                <tr>
+                    <td><%= prenotazione.data.toLocaleString().replace(/,.+/, '')%></td>
+                    <td><%= prenotazione.ora_inizio%> - <%= prenotazione.ora_fine%></td>
+                    <td><%= prenotazione.postazione %></td>
+                    <td>
+                        <%if(prenotazione.gioco == null){%>
+                            <%= 'No'%>
+                        <%}else{%>
+                            <%= prenotazione.gioco%>
+                        <%}%>
+                    </td>
+                    <td>
+                        <form action="/adminDashboard/cancellaPrenotazione" method="POST">
+                            <input type="hidden" name="id_prenotazione" value="<%=prenotazione.id_prenotazione%>">
+                            <button type="submit" class="btn btn-danger">Annulla</button>
+                        </form>
+                    </td>
+                </tr>
+            <%});%>
+            </tbody>
+        </table>
+    </div>
+
+
+</div>
+
+<!-- Inserimento Bootstrap -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

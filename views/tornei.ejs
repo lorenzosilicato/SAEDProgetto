@@ -1,21 +1,19 @@
-
+<%- include('./partials/navbar.ejs') %>
 <div class="container mt-5">
-    <h1>Available Tournaments</h1>
+    <h1>Tornei Disponibili</h1>
 
-    <!-- Tournament Cards Section -->
-    <div class="row mt-4">
-        <!-- Tournament Card - Chess -->
+    <%- include('./partials/messages.ejs') %>
+    <div class="row row-cols-1 row-cols-md-2 g-4">
         <% tornei.forEach((torneo)=>{  %>
-            <div class="row mt-4">
-                <!-- Tournament Card -->
-                <div class="col-md-4 mb-4">
+            <div class="col">
+                <div class="col-mb-4">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title"><%= torneo.gioco %> Tournament</h5>
+                            <h5 class="card-title">Torneo di <%= torneo.gioco %></h5>
                             <p class="card-text">
-                                <strong>Date:</strong> <%= torneo.data.toLocaleString().replace(/,.+/, '') %><br>
-                                <strong>Time:</strong> <%=torneo.ora_inizio%> - <%=torneo.ora_fine%><br>
-                                <strong>Max Participants:</strong> <%=torneo.max_iscritti%><br>
+                                <strong>Data:</strong> <%= torneo.data.toLocaleString().replace(/,.+/, '') %><br>
+                                <strong>Fascia Oraria:</strong> <%=torneo.ora_inizio%> - <%=torneo.ora_fine%><br>
+                                <strong>Max Giocatori:</strong> <%=torneo.max_iscritti%><br>
                             </p>
                             <form action="/iscrizioni/tornei" method="POST">
                                 <input type="hidden" name="idTorneo" value="<%=torneo.id_torneo%>">
@@ -35,11 +33,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script>
-    function idTorneo(id){
-        let value = id;
-    }
-</script>
 
 
 

@@ -1,4 +1,4 @@
-#Gestione di una Sala LAN
+# Gestione di una Sala LAN
 Questo progetto punta a creare un sistema per la gestione di una Sala LAN. 
 
 Permette di creare/partecipare a dei tornei o di prenotare una postazione.
